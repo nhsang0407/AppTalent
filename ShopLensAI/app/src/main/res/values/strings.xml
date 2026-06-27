@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ShopLens AI</string>
+    <string name="app_tagline">Shop smarter with AI</string>
+
+    <!-- Generic -->
+    <string name="loading">Loading…</string>
+    <string name="retry">Retry</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="update">Update</string>
+    <string name="confirm">Confirm</string>
+    <string name="close">Close</string>
+    <string name="ok">OK</string>
+    <string name="search_hint">Search products…</string>
+    <string name="something_went_wrong">Something went wrong. Please try again.</string>
+    <string name="no_internet">No internet connection.</string>
+
+    <!-- Auth -->
+    <string name="login">Log In</string>
+    <string name="register">Create Account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="full_name">Full Name</string>
+    <string name="dont_have_account">Don\'t have an account? Register</string>
+    <string name="already_have_account">Already have an account? Log in</string>
+    <string name="welcome_back">Welcome back</string>
+    <string name="welcome_back_sub">Log in to continue shopping</string>
+    <string name="create_account_sub">Join ShopLens AI in seconds</string>
+    <string name="error_empty_field">This field is required</string>
+    <string name="error_invalid_email">Enter a valid email address</string>
+    <string name="error_password_short">Password must be at least 6 characters</string>
+    <string name="error_passwords_mismatch">Passwords do not match</string>
+
+    <!-- Home -->
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="cart">Cart</string>
+    <string name="orders">Orders</string>
+    <string name="cat_all">All</string>
+    <string name="cat_fashion">Fashion</string>
+    <string name="cat_electronics">Electronics</string>
+    <string name="cat_food">Food</string>
+    <string name="cat_home">Home</string>
+    <string name="cat_beauty">Beauty</string>
+    <string name="cat_other">Other</string>
+    <string name="visual_search">Visual Search</string>
+    <string name="empty_products_title">No products yet</string>
+    <string name="empty_products_sub">Check back soon — new arrivals are on the way.</string>
+
+    <!-- Visual search -->
+    <string name="scan_barcode">Scan Barcode</string>
+    <string name="identify_product">Identify Product</string>
+    <string name="point_camera">Point your camera at a product</string>
+    <string name="analyzing">Analyzing with AI…</string>
+    <string name="scan_barcode_hint">Align the barcode within the frame</string>
+
+    <!-- Product detail -->
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="added_to_cart">Added to cart</string>
+    <string name="out_of_stock">Out of Stock</string>
+    <string name="in_stock">%1$d in stock</string>
+    <string name="ai_review_summary">AI Review Summary</string>
+    <string name="tap_to_generate_summary">Tap to generate an AI summary of all reviews</string>
+    <string name="write_review">Write a Review</string>
+    <string name="reviews">Reviews</string>
+    <string name="no_reviews">No reviews yet. Be the first!</string>
+    <string name="your_review">Your review</string>
+    <string name="submit_review">Submit Review</string>
+    <string name="review_added">Thanks for your review!</string>
+
+    <!-- Cart / checkout -->
+    <string name="subtotal">Subtotal</string>
+    <string name="total">Total</string>
+    <string name="proceed_to_checkout">Proceed to Checkout</string>
+    <string name="empty_cart_title">Your cart is empty</string>
+    <string name="empty_cart_sub">Browse products and add your favorites here.</string>
+    <string name="checkout">Checkout</string>
+    <string name="delivery_address">Delivery Address</string>
+    <string name="place_order">Place Order</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="order_placed_title">Order placed!</string>
+    <string name="order_placed_sub">Thank you. You can track your order in Order History.</string>
+
+    <!-- Orders -->
+    <string name="order_history">Order History</string>
+    <string name="empty_orders_title">No orders yet</string>
+    <string name="empty_orders_sub">Your placed orders will appear here.</string>
+    <string name="order_id">Order #%1$s</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_confirmed">Confirmed</string>
+    <string name="status_done">Done</string>
+    <string name="status_cancelled">Cancelled</string>
+
+    <!-- Profile -->
+    <string name="profile">Profile</string>
+    <string name="phone">Phone</string>
+    <string name="address">Address</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="logout">Log Out</string>
+    <string name="profile_updated">Profile updated</string>
+
+    <!-- Admin -->
+    <string name="dashboard">Dashboard</string>
+    <string name="products">Products</string>
+    <string name="trends">Trends</string>
+    <string name="total_revenue">Revenue (Today)</string>
+    <string name="total_orders">Total Orders</string>
+    <string name="pending_orders">Pending Orders</string>
+    <string name="low_stock_count">Low Stock</string>
+    <string name="revenue_last_7_days">Revenue · Last 7 Days</string>
+    <string name="recent_orders">Recent Orders</string>
+    <string name="low_stock_alert">Low Stock Alert</string>
+    <string name="product_management">Product Management</string>
+    <string name="add_product">Add Product</string>
+    <string name="edit_product">Edit Product</string>
+    <string name="take_photo">📷 Take Photo</string>
+    <string name="ai_generate_image">🤖 AI Generate Image</string>
+    <string name="ai_generate_description">✨ AI Generate Description</string>
+    <string name="product_name">Product Name</string>
+    <string name="category">Category</string>
+    <string name="price">Price</string>
+    <string name="stock">Stock</string>
+    <string name="barcode">Barcode</string>
+    <string name="scan">Scan</string>
+    <string name="description">Description</string>
+    <string name="delete_product_title">Delete product?</string>
+    <string name="delete_product_msg">This action cannot be undone.</string>
+    <string name="product_saved">Product saved</string>
+    <string name="product_deleted">Product deleted</string>
+    <string name="generating_image">Generating image with AI…</string>
+    <string name="generating_description">Writing description with AI…</string>
+    <string name="barcode_stock">Stock by Barcode</string>
+    <string name="scan_to_update_stock">Scan a barcode to update stock</string>
+    <string name="current_stock">Current stock: %1$d</string>
+    <string name="new_quantity">New quantity</string>
+    <string name="update_stock">Update Stock</string>
+    <string name="scan_another">Scan Another</string>
+    <string name="stock_updated">Stock updated</string>
+    <string name="order_management">Order Management</string>
+    <string name="tab_all">All</string>
+    <string name="customer">Customer: %1$s</string>
+    <string name="confirm_cancel_order">Cancel this order? The customer will be notified.</string>
+    <string name="search_trends">Visual Search Trends</string>
+    <string name="top_searched_labels">Top Searched Labels</string>
+    <string name="empty_trends">No search data yet.</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_app_logo">App logo</string>
+    <string name="cd_product_image">Product image</string>
+    <string name="cd_profile">Profile</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_close">Close</string>
+    <string name="cd_camera">Camera</string>
+    <string name="cd_add">Add</string>
+    <string name="cd_notifications">Notifications</string>
+
+    <!-- Formatting -->
+    <string name="price_format">$%.2f</string>
+    <string name="rating_count_format">%1$.1f (%2$d)</string>
+</resources>

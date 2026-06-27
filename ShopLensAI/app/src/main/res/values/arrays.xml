@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="categories">
+        <item>Fashion</item>
+        <item>Electronics</item>
+        <item>Food</item>
+        <item>Home</item>
+        <item>Beauty</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="order_status">
+        <item>pending</item>
+        <item>confirmed</item>
+        <item>done</item>
+        <item>cancelled</item>
+    </string-array>
+</resources>

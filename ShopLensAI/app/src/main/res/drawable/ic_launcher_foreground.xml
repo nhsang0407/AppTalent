@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Shopping bag -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M38,40h32a4,4 0,0 1,4 4l3,28a4,4 0,0 1,-4 4.5H35a4,4 0,0 1,-4 -4.5l3,-28A4,4 0,0 1,38 40z" />
+    <!-- Bag handle -->
+    <path
+        android:strokeColor="#1565C0"
+        android:strokeWidth="4"
+        android:fillColor="#00000000"
+        android:pathData="M45,44v-4a9,9 0,0 1,18 0v4" />
+    <!-- Lens -->
+    <path
+        android:fillColor="#FF6F00"
+        android:pathData="M58,56m-9,0a9,9 0,1 0,18 0a9,9 0,1 0,-18 0" />
+    <path
+        android:strokeColor="#FF6F00"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M65,63l6,6" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M58,56m-4,0a4,4 0,1 0,8 0a4,4 0,1 0,-8 0" />
+</vector>

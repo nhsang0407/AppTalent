@@ -1,0 +1,28 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Android build artifacts
+build/
+*/build/
+.gradle/
+*/.gradle/
+local.properties
+*/local.properties
+.externalNativeBuild/
+.cxx/
+captures/
+
+# macOS
+.DS_Store
+
+# Master prompt (internal)
+"# 🛒 MASTER PROMPT - ShopLens AI (A.txt"
+*.txt
+
+# Skills (internal tooling)
+.agents/
+
+# Google services (user must supply their own)
+# app/google-services.json
