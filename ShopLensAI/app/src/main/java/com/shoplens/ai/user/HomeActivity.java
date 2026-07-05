@@ -73,6 +73,8 @@ public class HomeActivity extends AppCompatActivity {
 
         binding.fabCamera.setOnClickListener(v ->
                 visualSearchLauncher.launch(new Intent(this, VisualSearchActivity.class)));
+        binding.cvAiAssistant.setOnClickListener(v ->
+                startActivity(new Intent(this, ShoppingAssistantActivity.class)));
         binding.swipeRefresh.setOnRefreshListener(() -> productViewModel.loadProducts(currentCategory));
         binding.btnApplyFilter.setOnClickListener(v -> applyPriceFilter());
 

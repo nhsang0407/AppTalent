@@ -40,6 +40,9 @@
         <!-- User -->
         <activity android:name=".user.HomeActivity" android:exported="false" />
         <activity android:name=".user.ProductDetailActivity" android:exported="false" />
+        <activity android:name=".user.ShoppingAssistantActivity" 
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
         <activity
             android:name=".user.VisualSearchActivity"
             android:exported="false"
