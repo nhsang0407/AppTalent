@@ -24,11 +24,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import com.shoplens.ai.model.Order;
+import com.shoplens.ai.model.Product;
+import com.shoplens.ai.model.SearchKeyword;
+
 /**
  * Wraps the Firebase AI Logic (Gemini Developer API) calls used across the app.
  * All callbacks are delivered on the main thread.
  */
 public class GeminiService {
+
+    public interface AdminInsightCallback {
+        void onSuccess(String insight);
+        void onError(Exception exception);
+    }
+
 
     /** Text/multimodal model. */
     private static final String TEXT_MODEL = "gemini-2.5-flash";
@@ -173,5 +183,111 @@ public class GeminiService {
 
     private static Exception asException(Throwable t) {
         return (t instanceof Exception) ? (Exception) t : new Exception(t);
+    }
+
+    public void generateAdminInsight(
+            @NonNull List<Product> products,
+            @NonNull List<Order> orders,
+            @NonNull List<SearchKeyword> topSearches,
+            @NonNull AdminInsightCallback callback
+    ) {
+        StringBuilder promptBuilder = new StringBuilder();
+        promptBuilder.append("Bạn là trợ lý phân tích kinh doanh cho admin của một app thương mại điện tử.\n\n");
+        promptBuilder.append("Dựa trên dữ liệu thống kê cửa hàng sau đây:\n\n");
+
+        // 1. Products & Inventory Info
+        promptBuilder.append("- DANH SÁCH SẢN PHẨM & TỒN KHO:\n");
+        if (products.isEmpty()) {
+            promptBuilder.append("  (Chưa có sản phẩm nào trong hệ thống)\n");
+        } else {
+            promptBuilder.append("  Tổng số sản phẩm: ").append(products.size()).append("\n");
+            promptBuilder.append("  Sản phẩm tồn kho thấp (dưới hoặc bằng 5 sản phẩm):\n");
+            int lowStockCount = 0;
+            for (Product p : products) {
+                if (p.getStock() <= 5) {
+                    promptBuilder.append("    * ").append(p.getName())
+                                 .append(" (Tồn kho: ").append(p.getStock())
+                                 .append(", Danh mục: ").append(p.getCategory()).append(")\n");
+                    lowStockCount++;
+                    if (lowStockCount >= 10) {
+                        promptBuilder.append("    * ... và một số sản phẩm khác.\n");
+                        break;
+                    }
+                }
+            }
+            if (lowStockCount == 0) {
+                promptBuilder.append("    * Không có sản phẩm nào sắp hết hàng.\n");
+            }
+        }
+        promptBuilder.append("\n");
+
+        // 2. Orders Info
+        promptBuilder.append("- DANH SÁCH ĐƠN HÀNG:\n");
+        if (orders.isEmpty()) {
+            promptBuilder.append("  (Chưa có đơn hàng nào trong hệ thống)\n");
+        } else {
+            promptBuilder.append("  Tổng số đơn hàng: ").append(orders.size()).append("\n");
+            int pendingCount = 0;
+            int confirmedCount = 0;
+            int doneCount = 0;
+            double pendingValue = 0.0;
+            double totalRevenue = 0.0;
+            for (Order o : orders) {
+                if ("pending".equals(o.getStatus())) {
+                    pendingCount++;
+                    pendingValue += o.getTotalPrice();
+                } else if ("confirmed".equals(o.getStatus())) {
+                    confirmedCount++;
+                    totalRevenue += o.getTotalPrice();
+                } else if ("done".equals(o.getStatus())) {
+                    doneCount++;
+                    totalRevenue += o.getTotalPrice();
+                }
+            }
+            promptBuilder.append("  * Đơn hàng chờ xử lý (pending): ").append(pendingCount)
+                         .append(" đơn, Tổng giá trị chờ: $").append(String.format(java.util.Locale.US, "%.2f", pendingValue)).append("\n");
+            promptBuilder.append("  * Đơn hàng đã xác nhận/hoàn thành: ").append(confirmedCount + doneCount)
+                         .append(" đơn, Tổng doanh thu ước tính: $").append(String.format(java.util.Locale.US, "%.2f", totalRevenue)).append("\n");
+        }
+        promptBuilder.append("\n");
+
+        // 3. Top Searches Info
+        promptBuilder.append("- TOP TỪ KHÓA TÌM KIẾM CỦA NGƯỜI DÙNG:\n");
+        if (topSearches.isEmpty()) {
+            promptBuilder.append("  (Chưa có từ khóa nào được tìm kiếm nhiều)\n");
+        } else {
+            for (SearchKeyword sk : topSearches) {
+                promptBuilder.append("  * ").append(sk.getKeyword())
+                             .append(" (Tìm kiếm: ").append(sk.getCount()).append(" lần)\n");
+            }
+        }
+        promptBuilder.append("\n");
+
+        promptBuilder.append("Yêu cầu output:\n");
+        promptBuilder.append("- Tạo báo cáo insight ngắn gọn bằng tiếng Việt cho admin.\n");
+        promptBuilder.append("- Định dạng: Viết từ 4 đến 7 dấu đầu dòng (bullet points) rõ ràng, súc tích.\n");
+        promptBuilder.append("- Mỗi dấu đầu dòng phải chỉ ra một nhận định hoặc đề xuất hành động kinh doanh thực tế.\n");
+        promptBuilder.append("- Tập trung vào: từ khóa đang được tìm nhiều, sản phẩm hot bị tồn kho thấp, danh mục cần bổ sung hàng, các đơn hàng cần ưu tiên xử lý, hoặc gợi ý khuyến mãi.\n");
+        promptBuilder.append("- Giọng văn chuyên nghiệp, ngắn gọn, dễ hiểu.\n");
+        promptBuilder.append("- Không bịa đặt số liệu. Nếu thiếu dữ liệu, hãy báo \"chưa đủ dữ liệu\" và đưa ra gợi ý chung hợp lý.\n");
+
+        Content content = new Content.Builder().addText(promptBuilder.toString()).build();
+        
+        Futures.addCallback(textModel.generateContent(content), new FutureCallback<GenerateContentResponse>() {
+            @Override
+            public void onSuccess(GenerateContentResponse result) {
+                String text = result.getText();
+                if (text != null && !text.trim().isEmpty()) {
+                    callback.onSuccess(text.trim());
+                } else {
+                    callback.onError(new IllegalStateException("Empty response from Gemini."));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable t) {
+                callback.onError(asException(t));
+            }
+        }, mainExecutor);
     }
 }

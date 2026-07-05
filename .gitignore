@@ -8,6 +8,8 @@ build/
 */build/
 .gradle/
 */.gradle/
+.gradle_home/
+*/.gradle_home/
 local.properties
 */local.properties
 .externalNativeBuild/

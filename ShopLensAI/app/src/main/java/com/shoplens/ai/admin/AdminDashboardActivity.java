@@ -61,6 +61,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         viewModel.loadDashboard();
 
+        binding.btnRefreshAiInsight.setOnClickListener(v -> viewModel.refreshAiInsight(true));
+
         // Seed products to Firestore if empty
         DatabaseSeeder.seedProductsIfNeeded();
     }
@@ -152,6 +154,20 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
 
         viewModel.getAllOrders().observe(this, this::bindChart);
+
+        viewModel.getAiInsight().observe(this, insight -> {
+            binding.tvAiInsight.setText(insight);
+        });
+
+        viewModel.getIsLoadingAiInsight().observe(this, isLoading -> {
+            binding.progressAiInsight.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            binding.btnRefreshAiInsight.setEnabled(!isLoading);
+        });
+
+        viewModel.getAiInsightError().observe(this, error -> {
+            binding.tvAiInsightError.setVisibility(error == null || error.isEmpty() ? View.GONE : View.VISIBLE);
+            binding.tvAiInsightError.setText(error);
+        });
     }
 
     private void bindStats(Map<String, Object> stats) {
@@ -245,6 +261,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         super.onResume();
         binding.bottomNav.setSelectedItemId(R.id.nav_dashboard);
         viewModel.loadDashboard();
+        viewModel.refreshAiInsight(false);
     }
 
     @Override
