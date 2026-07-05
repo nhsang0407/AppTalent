@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -502,5 +503,79 @@ public class GeminiService {
             this.product = product;
             this.score = score;
         }
+    }
+
+    public void generateReviewAssistText(
+            @NonNull com.shoplens.ai.model.ReviewAssistAction action,
+            @Nullable String currentReviewText,
+            float rating,
+            @Nullable Product product,
+            @NonNull GeminiCallback<String> callback
+    ) {
+        String productName = product != null ? product.getName() : "sản phẩm";
+        String category = product != null ? product.getCategory() : "chung";
+        double price = product != null ? product.getPrice() : 0.0;
+        String reviewText = currentReviewText != null ? currentReviewText.trim() : "";
+
+        String taskInstruction = "";
+        switch (action) {
+            case POLITE_REWRITE:
+                taskInstruction = "Viết lại review lịch sự, rõ ràng và dễ hiểu hơn.";
+                break;
+            case SHORTEN:
+                taskInstruction = "Rút gọn review nhưng giữ ý chính.";
+                break;
+            case PROOFREAD:
+                taskInstruction = "Sửa chính tả, dấu câu và cách diễn đạt, không thay đổi ý nghĩa.";
+                break;
+            case SUGGEST_FROM_RATING:
+                taskInstruction = "Gợi ý một review phù hợp dựa trên rating người dùng chọn và thông tin sản phẩm. Không bịa trải nghiệm chi tiết như giao hàng, đóng gói nếu không có dữ liệu.";
+                break;
+        }
+
+        StringBuilder promptBuilder = new StringBuilder();
+        promptBuilder.append("Bạn là trợ lý giúp người dùng viết review sản phẩm thương mại điện tử.\n\n");
+        promptBuilder.append("Sản phẩm:\n");
+        promptBuilder.append("- Tên: ").append(productName).append("\n");
+        promptBuilder.append("- Danh mục: ").append(category).append("\n");
+        promptBuilder.append("- Giá: $").append(price).append("\n");
+        promptBuilder.append("- Rating người dùng chọn: ").append((int) rating).append("/5\n\n");
+
+        if (!reviewText.isEmpty()) {
+            promptBuilder.append("Review hiện tại của người dùng:\n");
+            promptBuilder.append("\"").append(reviewText).append("\"\n\n");
+        }
+
+        promptBuilder.append("Nhiệm vụ:\n");
+        promptBuilder.append(taskInstruction).append("\n\n");
+
+        promptBuilder.append("Yêu cầu:\n");
+        promptBuilder.append("- Trả về duy nhất nội dung review đề xuất, không markdown, không giải thích.\n");
+        promptBuilder.append("- Viết bằng tiếng Việt tự nhiên.\n");
+        promptBuilder.append("- Không bịa trải nghiệm cụ thể mà người dùng chưa nói.\n");
+        promptBuilder.append("- Không bịa thông tin sản phẩm.\n");
+        promptBuilder.append("- Không quá dài, khoảng 1–3 câu.\n");
+        promptBuilder.append("- Không dùng ngôn ngữ xúc phạm.\n");
+        promptBuilder.append("- Không khẳng định sản phẩm chữa bệnh hoặc công dụng y tế.\n");
+        promptBuilder.append("- Giữ ý chính của người dùng nếu có review hiện tại.\n");
+
+        Content content = new Content.Builder().addText(promptBuilder.toString()).build();
+
+        Futures.addCallback(textModel.generateContent(content), new FutureCallback<GenerateContentResponse>() {
+            @Override
+            public void onSuccess(GenerateContentResponse result) {
+                String text = result.getText();
+                if (text != null && !text.trim().isEmpty()) {
+                    callback.onSuccess(text.trim());
+                } else {
+                    callback.onError(new IllegalStateException("Empty response from Gemini."));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable t) {
+                callback.onError(asException(t));
+            }
+        }, mainExecutor);
     }
 }

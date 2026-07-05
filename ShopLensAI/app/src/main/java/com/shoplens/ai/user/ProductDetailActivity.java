@@ -209,6 +209,99 @@ public class ProductDetailActivity extends AppCompatActivity {
         BottomSheetReviewBinding sheet = BottomSheetReviewBinding.inflate(getLayoutInflater());
         dialog.setContentView(sheet.getRoot());
 
+        // Setup AI actions
+        sheet.btnReviewPoliteRewrite.setOnClickListener(v -> {
+            String txt = sheet.etReview.getText() == null ? "" : sheet.etReview.getText().toString().trim();
+            if (txt.isEmpty()) {
+                sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
+                sheet.tvReviewAssistSuggestion.setText("Hãy nhập vài dòng review trước khi dùng tính năng này.");
+                sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+            } else {
+                reviewViewModel.assistReview(com.shoplens.ai.model.ReviewAssistAction.POLITE_REWRITE, txt, sheet.ratingInput.getRating(), currentProduct);
+            }
+        });
+
+        sheet.btnReviewShorten.setOnClickListener(v -> {
+            String txt = sheet.etReview.getText() == null ? "" : sheet.etReview.getText().toString().trim();
+            if (txt.isEmpty()) {
+                sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
+                sheet.tvReviewAssistSuggestion.setText("Hãy nhập vài dòng review trước khi dùng tính năng này.");
+                sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+            } else {
+                reviewViewModel.assistReview(com.shoplens.ai.model.ReviewAssistAction.SHORTEN, txt, sheet.ratingInput.getRating(), currentProduct);
+            }
+        });
+
+        sheet.btnReviewProofread.setOnClickListener(v -> {
+            String txt = sheet.etReview.getText() == null ? "" : sheet.etReview.getText().toString().trim();
+            if (txt.isEmpty()) {
+                sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
+                sheet.tvReviewAssistSuggestion.setText("Hãy nhập vài dòng review trước khi dùng tính năng này.");
+                sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+            } else {
+                reviewViewModel.assistReview(com.shoplens.ai.model.ReviewAssistAction.PROOFREAD, txt, sheet.ratingInput.getRating(), currentProduct);
+            }
+        });
+
+        sheet.btnReviewSuggestFromRating.setOnClickListener(v -> {
+            reviewViewModel.assistReview(com.shoplens.ai.model.ReviewAssistAction.SUGGEST_FROM_RATING, "", sheet.ratingInput.getRating(), currentProduct);
+        });
+
+        sheet.btnUseReviewSuggestion.setOnClickListener(v -> {
+            String suggestion = sheet.tvReviewAssistSuggestion.getText().toString();
+            if (!suggestion.isEmpty()) {
+                sheet.etReview.setText(suggestion);
+                sheet.layoutReviewAssistSuggestion.setVisibility(View.GONE);
+            }
+        });
+
+        // Observe ViewModel LiveData
+        reviewViewModel.getIsReviewAssistLoading().observe(this, loading -> {
+            if (dialog.isShowing()) {
+                sheet.progressReviewAssist.setVisibility(loading ? View.VISIBLE : View.GONE);
+                if (loading) {
+                    sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
+                    sheet.tvReviewAssistSuggestion.setText("Đang tạo gợi ý từ AI...");
+                    sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+                    sheet.btnReviewPoliteRewrite.setEnabled(false);
+                    sheet.btnReviewShorten.setEnabled(false);
+                    sheet.btnReviewProofread.setEnabled(false);
+                    sheet.btnReviewSuggestFromRating.setEnabled(false);
+                } else {
+                    sheet.btnReviewPoliteRewrite.setEnabled(true);
+                    sheet.btnReviewShorten.setEnabled(true);
+                    sheet.btnReviewProofread.setEnabled(true);
+                    sheet.btnReviewSuggestFromRating.setEnabled(true);
+                }
+            }
+        });
+
+        reviewViewModel.getReviewAssistSuggestion().observe(this, suggestion -> {
+            if (dialog.isShowing() && suggestion != null) {
+                sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
+                sheet.tvReviewAssistSuggestion.setText(suggestion);
+                if (!suggestion.isEmpty() && !suggestion.startsWith("Hãy nhập vài dòng")) {
+                    sheet.btnUseReviewSuggestion.setVisibility(View.VISIBLE);
+                } else {
+                    sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        reviewViewModel.getReviewAssistError().observe(this, error -> {
+            if (dialog.isShowing() && error != null) {
+                sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
+                sheet.tvReviewAssistSuggestion.setText("Hiện chưa thể tạo gợi ý bằng AI. Bạn có thể thử lại sau.");
+                sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+            }
+        });
+
+        dialog.setOnDismissListener(d -> {
+            reviewViewModel.getReviewAssistSuggestion().setValue(null);
+            reviewViewModel.getIsReviewAssistLoading().setValue(false);
+            reviewViewModel.getReviewAssistError().setValue(null);
+        });
+
         sheet.btnSubmitReview.setOnClickListener(v -> {
             String content = sheet.etReview.getText() == null ? "" :
                     sheet.etReview.getText().toString().trim();

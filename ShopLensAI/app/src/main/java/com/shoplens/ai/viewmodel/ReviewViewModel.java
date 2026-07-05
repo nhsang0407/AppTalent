@@ -25,6 +25,9 @@ public class ReviewViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> summaryLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> reviewAdded = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isReviewAssistLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<String> reviewAssistSuggestion = new MutableLiveData<>();
+    private final MutableLiveData<String> reviewAssistError = new MutableLiveData<>();
 
     public ReviewViewModel(@NonNull Application application) {
         super(application);
@@ -53,6 +56,18 @@ public class ReviewViewModel extends AndroidViewModel {
 
     public MutableLiveData<String> getErrorMessage() {
         return errorMessage;
+    }
+
+    public MutableLiveData<Boolean> getIsReviewAssistLoading() {
+        return isReviewAssistLoading;
+    }
+
+    public MutableLiveData<String> getReviewAssistSuggestion() {
+        return reviewAssistSuggestion;
+    }
+
+    public MutableLiveData<String> getReviewAssistError() {
+        return reviewAssistError;
     }
 
     public void loadReviews(String productId) {
@@ -154,6 +169,32 @@ public class ReviewViewModel extends AndroidViewModel {
             public void onError(Exception e) {
                 summaryLoading.setValue(false);
                 errorMessage.setValue(e.getMessage());
+            }
+        });
+    }
+
+    public void assistReview(
+            com.shoplens.ai.model.ReviewAssistAction action,
+            String currentReviewText,
+            float rating,
+            com.shoplens.ai.model.Product product
+    ) {
+        isReviewAssistLoading.setValue(true);
+        reviewAssistSuggestion.setValue(null);
+        reviewAssistError.setValue(null);
+
+        com.shoplens.ai.ai.ReviewAssistService assistService = new com.shoplens.ai.ai.ReviewAssistService(getApplication());
+        assistService.assistReview(action, currentReviewText, rating, product, new com.shoplens.ai.ai.ReviewAssistService.ReviewAssistCallback() {
+            @Override
+            public void onSuccess(com.shoplens.ai.model.ReviewAssistResult result) {
+                isReviewAssistLoading.setValue(false);
+                reviewAssistSuggestion.setValue(result.getSuggestedText());
+            }
+
+            @Override
+            public void onError(Exception exception) {
+                isReviewAssistLoading.setValue(false);
+                reviewAssistError.setValue(exception.getMessage());
             }
         });
     }
