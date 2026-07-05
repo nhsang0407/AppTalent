@@ -3,6 +3,12 @@ package com.shoplens.ai.user;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.graphics.Insets;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -216,6 +222,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                 sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
                 sheet.tvReviewAssistSuggestion.setText("Hãy nhập vài dòng review trước khi dùng tính năng này.");
                 sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+                
+                sheet.scrollReviewSheet.postDelayed(() -> {
+                    sheet.scrollReviewSheet.smoothScrollTo(0, sheet.layoutReviewAssistSuggestion.getTop());
+                }, 200);
             } else {
                 reviewViewModel.assistReview(com.shoplens.ai.model.ReviewAssistAction.POLITE_REWRITE, txt, sheet.ratingInput.getRating(), currentProduct);
             }
@@ -227,6 +237,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                 sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
                 sheet.tvReviewAssistSuggestion.setText("Hãy nhập vài dòng review trước khi dùng tính năng này.");
                 sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+                
+                sheet.scrollReviewSheet.postDelayed(() -> {
+                    sheet.scrollReviewSheet.smoothScrollTo(0, sheet.layoutReviewAssistSuggestion.getTop());
+                }, 200);
             } else {
                 reviewViewModel.assistReview(com.shoplens.ai.model.ReviewAssistAction.SHORTEN, txt, sheet.ratingInput.getRating(), currentProduct);
             }
@@ -238,6 +252,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                 sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
                 sheet.tvReviewAssistSuggestion.setText("Hãy nhập vài dòng review trước khi dùng tính năng này.");
                 sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+                
+                sheet.scrollReviewSheet.postDelayed(() -> {
+                    sheet.scrollReviewSheet.smoothScrollTo(0, sheet.layoutReviewAssistSuggestion.getTop());
+                }, 200);
             } else {
                 reviewViewModel.assistReview(com.shoplens.ai.model.ReviewAssistAction.PROOFREAD, txt, sheet.ratingInput.getRating(), currentProduct);
             }
@@ -255,6 +273,15 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
         });
 
+        // Focus listener for smooth scrolling
+        sheet.etReview.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                sheet.scrollReviewSheet.postDelayed(() -> {
+                    sheet.scrollReviewSheet.smoothScrollTo(0, sheet.tilReview.getTop());
+                }, 200);
+            }
+        });
+
         // Observe ViewModel LiveData
         reviewViewModel.getIsReviewAssistLoading().observe(this, loading -> {
             if (dialog.isShowing()) {
@@ -267,6 +294,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                     sheet.btnReviewShorten.setEnabled(false);
                     sheet.btnReviewProofread.setEnabled(false);
                     sheet.btnReviewSuggestFromRating.setEnabled(false);
+                    
+                    sheet.scrollReviewSheet.postDelayed(() -> {
+                        sheet.scrollReviewSheet.smoothScrollTo(0, sheet.layoutReviewAssistSuggestion.getTop());
+                    }, 200);
                 } else {
                     sheet.btnReviewPoliteRewrite.setEnabled(true);
                     sheet.btnReviewShorten.setEnabled(true);
@@ -285,6 +316,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                 } else {
                     sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
                 }
+                
+                sheet.scrollReviewSheet.postDelayed(() -> {
+                    sheet.scrollReviewSheet.smoothScrollTo(0, sheet.layoutReviewAssistSuggestion.getTop());
+                }, 200);
             }
         });
 
@@ -293,6 +328,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                 sheet.layoutReviewAssistSuggestion.setVisibility(View.VISIBLE);
                 sheet.tvReviewAssistSuggestion.setText("Hiện chưa thể tạo gợi ý bằng AI. Bạn có thể thử lại sau.");
                 sheet.btnUseReviewSuggestion.setVisibility(View.GONE);
+                
+                sheet.scrollReviewSheet.postDelayed(() -> {
+                    sheet.scrollReviewSheet.smoothScrollTo(0, sheet.layoutReviewAssistSuggestion.getTop());
+                }, 200);
             }
         });
 
@@ -317,6 +356,47 @@ public class ProductDetailActivity extends AppCompatActivity {
             reviewViewModel.addReview(productId, uid, currentUserName, content, rating);
             dialog.dismiss();
         });
+
+        // Set Soft Input resizing & configure BottomSheetBehavior
+        dialog.setOnShowListener(d -> {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+                                | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                );
+            }
+
+            FrameLayout bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                com.google.android.material.bottomsheet.BottomSheetBehavior<FrameLayout> behavior =
+                        com.google.android.material.bottomsheet.BottomSheetBehavior.from(bottomSheet);
+                behavior.setState(com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED);
+                behavior.setSkipCollapsed(true);
+                behavior.setFitToContents(false);
+                behavior.setHalfExpandedRatio(0.9f);
+
+                ViewGroup.LayoutParams params = bottomSheet.getLayoutParams();
+                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                bottomSheet.setLayoutParams(params);
+            }
+        });
+
+        // Set WindowInsets listener to dynamically size spacer view matching keyboard height
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(sheet.getRoot(), (v, insets) -> {
+            androidx.core.graphics.Insets ime = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.ime());
+            androidx.core.graphics.Insets systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+            boolean imeVisible = insets.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime());
+
+            int spacerHeight = imeVisible ? ime.bottom : systemBars.bottom;
+            ViewGroup.LayoutParams params = sheet.viewReviewImeSpacer.getLayoutParams();
+            if (params.height != spacerHeight) {
+                params.height = spacerHeight;
+                sheet.viewReviewImeSpacer.setLayoutParams(params);
+            }
+            return insets;
+        });
+        androidx.core.view.ViewCompat.requestApplyInsets(sheet.getRoot());
 
         dialog.show();
     }

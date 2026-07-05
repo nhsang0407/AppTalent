@@ -1,172 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootReviewSheet"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/bg_rounded_top"
-    android:orientation="vertical"
-    android:padding="@dimen/space_xl">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_rounded_top">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/write_review"
-        android:textAppearance="@style/Text.Title" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_l"
-        android:text="@string/your_review"
-        android:textAppearance="@style/Text.Body" />
-
-    <RatingBar
-        android:id="@+id/rating_input"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_s"
-        android:numStars="5"
-        android:rating="5"
-        android:stepSize="1" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_review"
-        style="@style/Widget.ShopLens.TextInput"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollReviewSheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_m"
-        android:hint="@string/your_review">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:clipToPadding="false">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_review"
+        <LinearLayout
+            android:id="@+id/contentReviewSheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top"
-            android:inputType="textMultiLine|textCapSentences"
-            android:minLines="3" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="vertical"
+            android:padding="@dimen/space_xl">
 
-    <!-- AI Assist Section -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_m"
-        android:text="Hỗ trợ viết review bằng AI"
-        android:textAppearance="@style/Text.Body"
-        android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/write_review"
+                android:textAppearance="@style/Text.Title" />
 
-    <!-- Button Row 1 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/space_s"
-        android:gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:text="@string/your_review"
+                android:textAppearance="@style/Text.Body" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnReviewPoliteRewrite"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="4dp"
-            android:text="Lịch sự hơn"
-            android:textSize="11sp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:padding="2dp" />
+            <RatingBar
+                android:id="@+id/rating_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:numStars="5"
+                android:rating="5"
+                android:stepSize="1" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnReviewShorten"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:text="Rút gọn"
-            android:textSize="11sp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:padding="2dp" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_review"
+                style="@style/Widget.ShopLens.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:hint="@string/your_review">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnReviewProofread"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:text="Sửa chính tả"
-            android:textSize="11sp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:padding="2dp" />
-    </LinearLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_review"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:minLines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Button Row 2 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="4dp"
-        android:gravity="center_vertical">
+            <!-- AI Assist Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:text="Hỗ trợ viết review bằng AI"
+                android:textAppearance="@style/Text.Body"
+                android:textStyle="bold" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnReviewSuggestFromRating"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Gợi ý review từ rating"
-            android:textSize="12sp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:padding="4dp" />
-    </LinearLayout>
+            <!-- Button Row 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/space_s"
+                android:gravity="center_vertical">
 
-    <!-- AI Suggestion Result Box -->
-    <LinearLayout
-        android:id="@+id/layoutReviewAssistSuggestion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/space_m"
-        android:background="@drawable/bg_qty_box"
-        android:padding="@dimen/space_m"
-        android:visibility="gone">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReviewPoliteRewrite"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:text="Lịch sự hơn"
+                    android:textSize="11sp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="2dp" />
 
-        <ProgressBar
-            android:id="@+id/progressReviewAssist"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:visibility="gone" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReviewShorten"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:text="Rút gọn"
+                    android:textSize="11sp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="2dp" />
 
-        <TextView
-            android:id="@+id/tvReviewAssistSuggestion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="@color/text_primary"
-            android:textSize="13sp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReviewProofread"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:text="Sửa chính tả"
+                    android:textSize="11sp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="2dp" />
+            </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUseReviewSuggestion"
-            style="@style/Widget.ShopLens.Button.Secondary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_s"
-            android:text="Dùng gợi ý"
-            android:textSize="13sp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp" />
-    </LinearLayout>
+            <!-- Button Row 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_submit_review"
-        style="@style/Widget.ShopLens.Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_l"
-        android:text="@string/submit_review" />
-</LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReviewSuggestFromRating"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gợi ý review từ rating"
+                    android:textSize="12sp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="4dp" />
+            </LinearLayout>
+
+            <!-- AI Suggestion Result Box -->
+            <LinearLayout
+                android:id="@+id/layoutReviewAssistSuggestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/space_m"
+                android:background="@drawable/bg_qty_box"
+                android:padding="@dimen/space_m"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:id="@+id/progressReviewAssist"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvReviewAssistSuggestion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUseReviewSuggestion"
+                    style="@style/Widget.ShopLens.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:text="Dùng gợi ý"
+                    android:textSize="13sp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_submit_review"
+                style="@style/Widget.ShopLens.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:text="@string/submit_review" />
+
+            <!-- Spacer for keyboard height -->
+            <View
+                android:id="@+id/viewReviewImeSpacer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
