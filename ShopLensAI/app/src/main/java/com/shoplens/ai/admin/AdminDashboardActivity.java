@@ -2,8 +2,11 @@ package com.shoplens.ai.admin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,10 +22,12 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.shoplens.ai.R;
 import com.shoplens.ai.adapter.OrderAdapter;
 import com.shoplens.ai.adapter.ProductAdapter;
+import com.shoplens.ai.auth.LoginActivity;
 import com.shoplens.ai.databinding.ActivityAdminDashboardBinding;
 import com.shoplens.ai.model.Order;
 import com.shoplens.ai.utils.Constants;
 import com.shoplens.ai.utils.DatabaseSeeder;
+import com.shoplens.ai.utils.FirebaseUtils;
 import com.shoplens.ai.viewmodel.AdminDashboardViewModel;
 
 import java.text.SimpleDateFormat;
@@ -44,6 +49,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityAdminDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
 
         viewModel = new ViewModelProvider(this).get(AdminDashboardViewModel.class);
 
@@ -239,5 +245,24 @@ public class AdminDashboardActivity extends AppCompatActivity {
         super.onResume();
         binding.bottomNav.setSelectedItemId(R.id.nav_dashboard);
         viewModel.loadDashboard();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_admin_dashboard, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            FirebaseUtils.getAuth().signOut();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
