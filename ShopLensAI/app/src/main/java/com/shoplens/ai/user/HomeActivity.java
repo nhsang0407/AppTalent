@@ -23,6 +23,9 @@ import com.shoplens.ai.utils.DatabaseSeeder;
 import com.shoplens.ai.viewmodel.CartViewModel;
 import com.shoplens.ai.viewmodel.ProductViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
@@ -35,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private String currentCategory = null;
     private boolean pendingBarcodeLookup = false;
+    private List<Product> originalProductsList = new ArrayList<>();
 
     private final ActivityResultLauncher<Intent> visualSearchLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -70,6 +74,7 @@ public class HomeActivity extends AppCompatActivity {
         binding.fabCamera.setOnClickListener(v ->
                 visualSearchLauncher.launch(new Intent(this, VisualSearchActivity.class)));
         binding.swipeRefresh.setOnRefreshListener(() -> productViewModel.loadProducts(currentCategory));
+        binding.btnApplyFilter.setOnClickListener(v -> applyPriceFilter());
 
         productViewModel.loadProducts(null);
 
@@ -129,10 +134,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private void observeViewModel() {
         productViewModel.getProducts().observe(this, products -> {
-            adapter.submit(products);
-            boolean empty = products == null || products.isEmpty();
-            binding.llEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
-            binding.rvProducts.setVisibility(empty ? View.GONE : View.VISIBLE);
+            originalProductsList = products != null ? products : new ArrayList<>();
+            applyPriceFilter();
         });
 
         productViewModel.getIsLoading().observe(this, loading -> {
@@ -218,5 +221,54 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void applyPriceFilter() {
+        if (originalProductsList == null) {
+            return;
+        }
+
+        String minStr = binding.etMinPrice.getText() != null ?
+                binding.etMinPrice.getText().toString().trim() : "";
+        String maxStr = binding.etMaxPrice.getText() != null ?
+                binding.etMaxPrice.getText().toString().trim() : "";
+
+        double minPrice = 0.0;
+        double maxPrice = Double.MAX_VALUE;
+
+        try {
+            if (!minStr.isEmpty()) {
+                minPrice = Double.parseDouble(minStr);
+            }
+        } catch (NumberFormatException e) {
+            // Ignore
+        }
+
+        try {
+            if (!maxStr.isEmpty()) {
+                maxPrice = Double.parseDouble(maxStr);
+            }
+        } catch (NumberFormatException e) {
+            // Ignore
+        }
+
+        if (minPrice > maxPrice) {
+            binding.tilMinPrice.setError("Min > Max");
+            return;
+        } else {
+            binding.tilMinPrice.setError(null);
+        }
+
+        List<Product> filteredList = new ArrayList<>();
+        for (Product p : originalProductsList) {
+            if (p.getPrice() >= minPrice && p.getPrice() <= maxPrice) {
+                filteredList.add(p);
+            }
+        }
+
+        adapter.submit(filteredList);
+        boolean empty = filteredList.isEmpty();
+        binding.llEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
+        binding.rvProducts.setVisibility(empty ? View.GONE : View.VISIBLE);
     }
 }

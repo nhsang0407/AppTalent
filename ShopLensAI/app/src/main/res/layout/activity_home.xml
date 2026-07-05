@@ -86,6 +86,65 @@
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 
+        <LinearLayout
+            android:id="@+id/ll_price_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/surface"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_l"
+            android:paddingBottom="@dimen/space_s"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chip_scroll">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_min_price"
+                style="@style/Widget.ShopLens.TextInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Min ($)"
+                android:layout_marginEnd="@dimen/space_s">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_min_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_max_price"
+                style="@style/Widget.ShopLens.TextInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Max ($)"
+                android:layout_marginStart="@dimen/space_s"
+                android:layout_marginEnd="@dimen/space_s">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_max_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_apply_filter"
+                style="@style/Widget.ShopLens.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filter"
+                android:textSize="12sp" />
+        </LinearLayout>
+
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh"
             android:layout_width="0dp"
@@ -93,7 +152,7 @@
             app:layout_constraintBottom_toTopOf="@id/bottom_nav"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chip_scroll">
+            app:layout_constraintTop_toBottomOf="@id/ll_price_filter">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_products"
@@ -114,7 +173,7 @@
             app:layout_constraintBottom_toTopOf="@id/bottom_nav"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chip_scroll">
+            app:layout_constraintTop_toBottomOf="@id/ll_price_filter">
 
             <ImageView
                 android:layout_width="96dp"
