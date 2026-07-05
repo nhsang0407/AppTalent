@@ -159,10 +159,14 @@ public class ProfileActivity extends AppCompatActivity {
         binding.tvViewPhone.setText(user.getPhone() != null && !user.getPhone().isEmpty()
                 ? user.getPhone() : "—");
 
-        // Avatar
-        if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
+        // Avatar — only load from Glide if avatarUrl is a valid https:// URL.
+        // Any other value (null, empty, gs:// path) must show default avatar without
+        // touching Firebase Storage (avoids "Object does not exist at location").
+        String avatarUrl = user.getAvatarUrl();
+        if (avatarUrl != null && avatarUrl.startsWith("https://")) {
+            android.util.Log.d("ProfileActivity", "populateUser: loading avatar from URL");
             Glide.with(this)
-                    .load(user.getAvatarUrl())
+                    .load(avatarUrl)
                     .circleCrop()
                     .placeholder(R.drawable.ic_person)
                     .error(R.drawable.ic_person)
@@ -170,6 +174,11 @@ public class ProfileActivity extends AppCompatActivity {
             binding.ivAvatar.setPadding(0, 0, 0, 0);
             binding.ivAvatar.clearColorFilter();
         } else {
+            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                android.util.Log.w("ProfileActivity",
+                        "populateUser: invalid avatarUrl (not https://), showing default. url=" + avatarUrl);
+            }
+            // Show default person icon with padding
             binding.ivAvatar.setPadding(
                     (int) getResources().getDimension(R.dimen.space_l),
                     (int) getResources().getDimension(R.dimen.space_l),

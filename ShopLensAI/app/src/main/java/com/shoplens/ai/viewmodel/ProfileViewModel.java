@@ -28,6 +28,8 @@ import java.util.Map;
  */
 public class ProfileViewModel extends AndroidViewModel {
 
+    private static final String TAG = "ProfileViewModel";
+
     private final MutableLiveData<User> user = new MutableLiveData<>();
     private final MutableLiveData<List<Address>> addresses = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -97,35 +99,82 @@ public class ProfileViewModel extends AndroidViewModel {
 
     public void updateAvatar(@NonNull Uri imageUri) {
         String uid = FirebaseUtils.getCurrentUserId();
-        if (uid == null) return;
+        if (uid == null) {
+            errorMessage.setValue("Vui lòng đăng nhập lại.");
+            return;
+        }
         avatarUploading.setValue(true);
-        FirebaseUtils.uploadImageToStorage(imageUri, Constants.STORAGE_AVATARS,
-                new FirebaseUtils.UploadCallback() {
-                    @Override
-                    public void onSuccess(String downloadUrl) {
-                        FirebaseUtils.getDb().collection(Constants.COLLECTION_USERS)
-                                .document(uid).update("avatarUrl", downloadUrl)
-                                .addOnSuccessListener(unused -> {
-                                    avatarUploading.setValue(false);
-                                    User current = user.getValue();
-                                    if (current != null) {
-                                        current.setAvatarUrl(downloadUrl);
-                                        user.setValue(current);
-                                    }
-                                    successMessage.setValue("avatar_updated");
-                                })
-                                .addOnFailureListener(e -> {
-                                    avatarUploading.setValue(false);
-                                    errorMessage.setValue(e.getMessage());
-                                });
-                    }
+        android.util.Log.d(TAG, "updateAvatar: start, uri=" + imageUri);
 
-                    @Override
-                    public void onError(Exception e) {
-                        avatarUploading.setValue(false);
-                        errorMessage.setValue(e.getMessage());
-                    }
-                });
+        // Read & compress bitmap on background thread to avoid content URI permission issues
+        // that cause putFile() to fail silently with "Object does not exist at location"
+        new Thread(() -> {
+            try {
+                android.graphics.Bitmap bitmap = com.shoplens.ai.utils.ImageUtils
+                        .uriToBitmap(getApplication(), imageUri);
+                if (bitmap == null) {
+                    android.util.Log.e(TAG, "updateAvatar: failed to read bitmap from URI");
+                    avatarUploading.postValue(false);
+                    errorMessage.postValue("Không thể đọc ảnh. Vui lòng thử ảnh khác.");
+                    return;
+                }
+                // Scale down to max 1024px side
+                bitmap = com.shoplens.ai.utils.ImageUtils.scaleDown(bitmap, 1024);
+                byte[] bytes = com.shoplens.ai.utils.ImageUtils.bitmapToJpegBytes(bitmap, 85);
+                android.util.Log.d(TAG, "updateAvatar: compressed " + bytes.length + " bytes");
+
+                // Use uid-based filename so each user has one avatar slot
+                String storagePath = Constants.STORAGE_AVATARS + uid + "_"
+                        + System.currentTimeMillis() + ".jpg";
+                android.util.Log.d(TAG, "updateAvatar: uploading to path=" + storagePath);
+
+                // Build storage ref and upload bytes directly (avoids content:// URI issues)
+                com.google.firebase.storage.StorageReference ref = FirebaseUtils.getStorage()
+                        .getReference().child(storagePath);
+                ref.putBytes(bytes)
+                        .addOnSuccessListener(taskSnapshot -> {
+                            android.util.Log.d(TAG, "updateAvatar: putBytes success, getting downloadUrl");
+                            ref.getDownloadUrl()
+                                    .addOnSuccessListener(dlUri -> {
+                                        String downloadUrl = dlUri.toString();
+                                        android.util.Log.d(TAG, "updateAvatar: downloadUrl=" + downloadUrl);
+                                        // Save to Firestore
+                                        FirebaseUtils.getDb()
+                                                .collection(Constants.COLLECTION_USERS).document(uid)
+                                                .update("avatarUrl", downloadUrl)
+                                                .addOnSuccessListener(unused -> {
+                                                    android.util.Log.d(TAG, "updateAvatar: Firestore saved");
+                                                    avatarUploading.setValue(false);
+                                                    User current = user.getValue();
+                                                    if (current != null) {
+                                                        current.setAvatarUrl(downloadUrl);
+                                                        user.setValue(current);
+                                                    }
+                                                    successMessage.setValue("avatar_updated");
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    android.util.Log.e(TAG, "updateAvatar: Firestore update failed", e);
+                                                    avatarUploading.setValue(false);
+                                                    errorMessage.setValue("Không thể lưu ảnh đại diện. Vui lòng thử lại.");
+                                                });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        android.util.Log.e(TAG, "updateAvatar: getDownloadUrl failed", e);
+                                        avatarUploading.setValue(false);
+                                        errorMessage.setValue("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
+                                    });
+                        })
+                        .addOnFailureListener(e -> {
+                            android.util.Log.e(TAG, "updateAvatar: putBytes failed", e);
+                            avatarUploading.setValue(false);
+                            errorMessage.setValue("Không thể tải ảnh lên. Vui lòng kiểm tra kết nối và thử lại.");
+                        });
+            } catch (Exception e) {
+                android.util.Log.e(TAG, "updateAvatar: exception", e);
+                avatarUploading.postValue(false);
+                errorMessage.postValue("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
+            }
+        }).start();
     }
 
     public void removeAvatar() {
