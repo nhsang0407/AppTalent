@@ -41,7 +41,7 @@
         <activity android:name=".user.HomeActivity" android:exported="false" />
         <activity android:name=".user.ProductDetailActivity" android:exported="false" />
         <activity android:name=".user.ShoppingAssistantActivity" 
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:exported="false" />
         <activity
             android:name=".user.VisualSearchActivity"
