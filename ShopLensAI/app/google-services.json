@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "922868855086",
-    "project_id": "shoplensai-e40e4",
-    "storage_bucket": "shoplensai-e40e4.firebasestorage.app"
+    "project_number": "263026601569",
+    "project_id": "shoplensai-40f7e",
+    "storage_bucket": "shoplensai-40f7e.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:922868855086:android:c88a45fc3aba3f038c8abf",
+        "mobilesdk_app_id": "1:263026601569:android:0b2d05200c948ed5654420",
         "android_client_info": {
           "package_name": "com.shoplens.ai"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA4MiqwVYigD5K-nsxFXlAIP726I5qnSMQ"
+          "current_key": "AIzaSyA-rKFi-sKKc-7ySbQkFb9HXaxWtXYPVvk"
         }
       ],
       "services": {
