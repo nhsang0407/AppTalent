@@ -22,6 +22,7 @@ import com.shoplens.ai.adapter.ProductAdapter;
 import com.shoplens.ai.databinding.ActivityAdminDashboardBinding;
 import com.shoplens.ai.model.Order;
 import com.shoplens.ai.utils.Constants;
+import com.shoplens.ai.utils.DatabaseSeeder;
 import com.shoplens.ai.viewmodel.AdminDashboardViewModel;
 
 import java.text.SimpleDateFormat;
@@ -53,6 +54,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
         observeViewModel();
 
         viewModel.loadDashboard();
+
+        // Seed products to Firestore if empty
+        DatabaseSeeder.seedProductsIfNeeded();
     }
 
     private void setupStatCards() {

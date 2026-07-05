@@ -16,6 +16,7 @@ import com.shoplens.ai.admin.AdminDashboardActivity;
 import com.shoplens.ai.databinding.ActivityLoginBinding;
 import com.shoplens.ai.user.HomeActivity;
 import com.shoplens.ai.utils.Constants;
+import com.shoplens.ai.utils.DatabaseSeeder;
 import com.shoplens.ai.viewmodel.AuthViewModel;
 
 public class LoginActivity extends AppCompatActivity {
@@ -36,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
         binding.btnLogin.setOnClickListener(v -> attemptLogin());
         binding.btnGoRegister.setOnClickListener(v ->
                 startActivity(new Intent(this, RegisterActivity.class)));
+
+        // Seed products to Firestore if empty
+        DatabaseSeeder.seedProductsIfNeeded();
     }
 
     private void observeViewModel() {

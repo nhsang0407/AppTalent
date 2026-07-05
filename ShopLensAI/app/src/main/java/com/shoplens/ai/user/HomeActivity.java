@@ -19,6 +19,7 @@ import com.shoplens.ai.adapter.ProductAdapter;
 import com.shoplens.ai.databinding.ActivityHomeBinding;
 import com.shoplens.ai.model.Product;
 import com.shoplens.ai.utils.Constants;
+import com.shoplens.ai.utils.DatabaseSeeder;
 import com.shoplens.ai.viewmodel.CartViewModel;
 import com.shoplens.ai.viewmodel.ProductViewModel;
 
@@ -71,6 +72,9 @@ public class HomeActivity extends AppCompatActivity {
         binding.swipeRefresh.setOnRefreshListener(() -> productViewModel.loadProducts(currentCategory));
 
         productViewModel.loadProducts(null);
+
+        // Seed products to Firestore if empty
+        DatabaseSeeder.seedProductsIfNeeded();
     }
 
     private void setupRecycler() {
