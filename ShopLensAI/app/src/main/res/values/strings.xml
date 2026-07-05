@@ -97,11 +97,52 @@
 
     <!-- Profile -->
     <string name="profile">Profile</string>
-    <string name="phone">Phone</string>
+    <string name="phone">Phone Number</string>
     <string name="address">Address</string>
     <string name="save_changes">Save Changes</string>
     <string name="logout">Log Out</string>
-    <string name="profile_updated">Profile updated</string>
+    <string name="profile_updated">Profile updated successfully</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="my_addresses">My Addresses</string>
+    <string name="language">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="confirm_logout">Confirm Logout</string>
+    <string name="confirm_logout_msg">Are you sure you want to log out?</string>
+    <string name="avatar_updated">Avatar updated</string>
+    <string name="avatar_removed">Avatar removed</string>
+    <string name="change_avatar">Change Avatar</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="take_a_photo">Take a Photo</string>
+    <string name="remove_avatar">Remove Avatar</string>
+    <string name="error_invalid_phone">Enter a valid phone number</string>
+    <string name="error_name_required">Full name is required</string>
+
+    <!-- Address -->
+    <string name="add_address">Add Address</string>
+    <string name="edit_address">Edit Address</string>
+    <string name="delete_address">Delete Address</string>
+    <string name="delete_address_msg">This address will be permanently removed.</string>
+    <string name="set_as_default">Set as Default</string>
+    <string name="default_address">Default</string>
+    <string name="receiver_name">Receiver Name</string>
+    <string name="address_detail">Address Detail</string>
+    <string name="ward">Ward / Commune</string>
+    <string name="district">District</string>
+    <string name="city">City / Province</string>
+    <string name="address_label">Label</string>
+    <string name="label_home">Home</string>
+    <string name="label_work">Work</string>
+    <string name="label_other">Other</string>
+    <string name="set_default_address">Set as default address</string>
+    <string name="address_saved">Address saved</string>
+    <string name="address_deleted">Address deleted</string>
+    <string name="default_assigned">New default address assigned</string>
+    <string name="no_addresses">No addresses yet.\nTap + to add your first address.</string>
+    <string name="address_required">Address detail is required</string>
+    <string name="city_required">City is required</string>
 
     <!-- Admin -->
     <string name="dashboard">Dashboard</string>

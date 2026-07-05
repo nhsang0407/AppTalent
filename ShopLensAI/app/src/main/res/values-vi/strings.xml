@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ShopLens AI</string>
+    <string name="app_tagline">Mua sắm thông minh cùng AI</string>
+
+    <!-- Generic -->
+    <string name="loading">Đang tải…</string>
+    <string name="retry">Thử lại</string>
+    <string name="save">Lưu</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="update">Cập nhật</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="close">Đóng</string>
+    <string name="ok">OK</string>
+    <string name="search_hint">Tìm kiếm sản phẩm…</string>
+    <string name="something_went_wrong">Đã xảy ra lỗi. Vui lòng thử lại.</string>
+    <string name="no_internet">Không có kết nối mạng.</string>
+
+    <!-- Auth -->
+    <string name="login">Đăng nhập</string>
+    <string name="register">Tạo tài khoản</string>
+    <string name="email">Email</string>
+    <string name="password">Mật khẩu</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="full_name">Họ và tên</string>
+    <string name="dont_have_account">Chưa có tài khoản? Đăng ký</string>
+    <string name="already_have_account">Đã có tài khoản? Đăng nhập</string>
+    <string name="welcome_back">Chào mừng trở lại</string>
+    <string name="welcome_back_sub">Đăng nhập để tiếp tục mua sắm</string>
+    <string name="create_account_sub">Tham gia ShopLens AI ngay</string>
+    <string name="error_empty_field">Trường này là bắt buộc</string>
+    <string name="error_invalid_email">Nhập địa chỉ email hợp lệ</string>
+    <string name="error_password_short">Mật khẩu phải có ít nhất 6 ký tự</string>
+    <string name="error_passwords_mismatch">Mật khẩu không khớp</string>
+
+    <!-- Home -->
+    <string name="home">Trang chủ</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="cart">Giỏ hàng</string>
+    <string name="orders">Đơn hàng</string>
+    <string name="cat_all">Tất cả</string>
+    <string name="cat_fashion">Thời trang</string>
+    <string name="cat_electronics">Điện tử</string>
+    <string name="cat_food">Thực phẩm</string>
+    <string name="cat_home">Nhà cửa</string>
+    <string name="cat_beauty">Làm đẹp</string>
+    <string name="cat_other">Khác</string>
+    <string name="visual_search">Tìm kiếm hình ảnh</string>
+    <string name="empty_products_title">Chưa có sản phẩm</string>
+    <string name="empty_products_sub">Hãy quay lại sau — sản phẩm mới đang được cập nhật.</string>
+
+    <!-- Visual search -->
+    <string name="scan_barcode">Quét mã vạch</string>
+    <string name="identify_product">Nhận diện sản phẩm</string>
+    <string name="point_camera">Hướng camera vào sản phẩm</string>
+    <string name="analyzing">Đang phân tích bằng AI…</string>
+    <string name="scan_barcode_hint">Căn chỉnh mã vạch trong khung</string>
+
+    <!-- Product detail -->
+    <string name="add_to_cart">Thêm vào giỏ</string>
+    <string name="added_to_cart">Đã thêm vào giỏ hàng</string>
+    <string name="out_of_stock">Hết hàng</string>
+    <string name="in_stock">Còn %1$d sản phẩm</string>
+    <string name="ai_review_summary">Tóm tắt đánh giá bằng AI</string>
+    <string name="tap_to_generate_summary">Nhấn để tạo tóm tắt AI từ tất cả đánh giá</string>
+    <string name="write_review">Viết đánh giá</string>
+    <string name="reviews">Đánh giá</string>
+    <string name="no_reviews">Chưa có đánh giá. Hãy là người đầu tiên!</string>
+    <string name="your_review">Đánh giá của bạn</string>
+    <string name="submit_review">Gửi đánh giá</string>
+    <string name="review_added">Cảm ơn đánh giá của bạn!</string>
+
+    <!-- Cart / checkout -->
+    <string name="subtotal">Tạm tính</string>
+    <string name="total">Tổng cộng</string>
+    <string name="proceed_to_checkout">Tiến hành thanh toán</string>
+    <string name="empty_cart_title">Giỏ hàng trống</string>
+    <string name="empty_cart_sub">Khám phá sản phẩm và thêm vào giỏ hàng.</string>
+    <string name="checkout">Thanh toán</string>
+    <string name="delivery_address">Địa chỉ giao hàng</string>
+    <string name="place_order">Đặt hàng</string>
+    <string name="order_summary">Tóm tắt đơn hàng</string>
+    <string name="order_placed_title">Đặt hàng thành công!</string>
+    <string name="order_placed_sub">Cảm ơn bạn. Bạn có thể theo dõi đơn hàng trong Lịch sử đơn hàng.</string>
+
+    <!-- Orders -->
+    <string name="order_history">Lịch sử đơn hàng</string>
+    <string name="empty_orders_title">Chưa có đơn hàng</string>
+    <string name="empty_orders_sub">Các đơn hàng đã đặt sẽ xuất hiện ở đây.</string>
+    <string name="order_id">Đơn hàng #%1$s</string>
+    <string name="status_pending">Chờ xử lý</string>
+    <string name="status_confirmed">Đã xác nhận</string>
+    <string name="status_done">Hoàn thành</string>
+    <string name="status_cancelled">Đã hủy</string>
+
+    <!-- Profile -->
+    <string name="profile">Hồ sơ</string>
+    <string name="phone">Số điện thoại</string>
+    <string name="address">Địa chỉ</string>
+    <string name="save_changes">Lưu thay đổi</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="profile_updated">Cập nhật hồ sơ thành công</string>
+    <string name="personal_information">Thông tin cá nhân</string>
+    <string name="phone_number">Số điện thoại</string>
+    <string name="account_settings">Cài đặt tài khoản</string>
+    <string name="my_addresses">Địa chỉ của tôi</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="language_english">Tiếng Anh</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="confirm_logout">Xác nhận đăng xuất</string>
+    <string name="confirm_logout_msg">Bạn có chắc chắn muốn đăng xuất không?</string>
+    <string name="avatar_updated">Đã cập nhật ảnh đại diện</string>
+    <string name="avatar_removed">Đã xóa ảnh đại diện</string>
+    <string name="change_avatar">Thay đổi ảnh đại diện</string>
+    <string name="choose_from_gallery">Chọn từ thư viện</string>
+    <string name="take_a_photo">Chụp ảnh mới</string>
+    <string name="remove_avatar">Xóa ảnh hiện tại</string>
+    <string name="error_invalid_phone">Số điện thoại không hợp lệ</string>
+    <string name="error_name_required">Họ và tên là bắt buộc</string>
+
+    <!-- Address -->
+    <string name="add_address">Thêm địa chỉ</string>
+    <string name="edit_address">Chỉnh sửa địa chỉ</string>
+    <string name="delete_address">Xóa địa chỉ</string>
+    <string name="delete_address_msg">Địa chỉ này sẽ bị xóa vĩnh viễn.</string>
+    <string name="set_as_default">Đặt làm mặc định</string>
+    <string name="default_address">Mặc định</string>
+    <string name="receiver_name">Tên người nhận</string>
+    <string name="address_detail">Địa chỉ chi tiết</string>
+    <string name="ward">Phường / Xã</string>
+    <string name="district">Quận / Huyện</string>
+    <string name="city">Tỉnh / Thành phố</string>
+    <string name="address_label">Nhãn</string>
+    <string name="label_home">Nhà riêng</string>
+    <string name="label_work">Văn phòng</string>
+    <string name="label_other">Khác</string>
+    <string name="set_default_address">Đặt làm địa chỉ mặc định</string>
+    <string name="address_saved">Đã lưu địa chỉ</string>
+    <string name="address_deleted">Đã xóa địa chỉ</string>
+    <string name="default_assigned">Đã chỉ định địa chỉ mặc định mới</string>
+    <string name="no_addresses">Chưa có địa chỉ nào.\nNhấn + để thêm địa chỉ đầu tiên.</string>
+    <string name="address_required">Địa chỉ chi tiết là bắt buộc</string>
+    <string name="city_required">Tỉnh/Thành phố là bắt buộc</string>
+
+    <!-- Admin -->
+    <string name="dashboard">Bảng điều khiển</string>
+    <string name="products">Sản phẩm</string>
+    <string name="trends">Xu hướng</string>
+    <string name="total_revenue">Doanh thu (Hôm nay)</string>
+    <string name="total_orders">Tổng đơn hàng</string>
+    <string name="pending_orders">Đơn chờ xử lý</string>
+    <string name="low_stock_count">Tồn kho thấp</string>
+    <string name="revenue_last_7_days">Doanh thu · 7 ngày qua</string>
+    <string name="recent_orders">Đơn hàng gần đây</string>
+    <string name="low_stock_alert">Cảnh báo tồn kho thấp</string>
+    <string name="product_management">Quản lý sản phẩm</string>
+    <string name="add_product">Thêm sản phẩm</string>
+    <string name="edit_product">Chỉnh sửa sản phẩm</string>
+    <string name="take_photo">📷 Chụp ảnh</string>
+    <string name="ai_generate_image">🤖 Tạo ảnh bằng AI</string>
+    <string name="ai_generate_description">✨ Tạo mô tả bằng AI</string>
+    <string name="product_name">Tên sản phẩm</string>
+    <string name="category">Danh mục</string>
+    <string name="price">Giá</string>
+    <string name="stock">Tồn kho</string>
+    <string name="barcode">Mã vạch</string>
+    <string name="scan">Quét</string>
+    <string name="description">Mô tả</string>
+    <string name="delete_product_title">Xóa sản phẩm?</string>
+    <string name="delete_product_msg">Hành động này không thể hoàn tác.</string>
+    <string name="product_saved">Đã lưu sản phẩm</string>
+    <string name="product_deleted">Đã xóa sản phẩm</string>
+    <string name="generating_image">Đang tạo ảnh bằng AI…</string>
+    <string name="generating_description">Đang viết mô tả bằng AI…</string>
+    <string name="barcode_stock">Tồn kho theo mã vạch</string>
+    <string name="scan_to_update_stock">Quét mã vạch để cập nhật tồn kho</string>
+    <string name="current_stock">Tồn kho hiện tại: %1$d</string>
+    <string name="new_quantity">Số lượng mới</string>
+    <string name="update_stock">Cập nhật tồn kho</string>
+    <string name="scan_another">Quét tiếp</string>
+    <string name="stock_updated">Đã cập nhật tồn kho</string>
+    <string name="order_management">Quản lý đơn hàng</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="customer">Khách hàng: %1$s</string>
+    <string name="confirm_cancel_order">Hủy đơn hàng này? Khách hàng sẽ được thông báo.</string>
+    <string name="search_trends">Xu hướng tìm kiếm hình ảnh</string>
+    <string name="top_searched_labels">Nhãn được tìm nhiều nhất</string>
+    <string name="empty_trends">Chưa có dữ liệu tìm kiếm.</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_app_logo">Logo ứng dụng</string>
+    <string name="cd_product_image">Hình ảnh sản phẩm</string>
+    <string name="cd_profile">Hồ sơ</string>
+    <string name="cd_search">Tìm kiếm</string>
+    <string name="cd_close">Đóng</string>
+    <string name="cd_camera">Camera</string>
+    <string name="cd_add">Thêm</string>
+    <string name="cd_notifications">Thông báo</string>
+
+    <!-- Formatting -->
+    <string name="price_format">$%.2f</string>
+    <string name="rating_count_format">%1$.1f (%2$d)</string>
+</resources>

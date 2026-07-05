@@ -14,6 +14,7 @@ public class User {
     private String role;      // "admin" or "user"
     private String address;
     private String phone;
+    private String avatarUrl;
     private Timestamp createdAt;
 
     /** Required empty constructor for Firestore deserialization. */
@@ -88,6 +89,16 @@ public class User {
     @PropertyName("phone")
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    @PropertyName("avatarUrl")
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    @PropertyName("avatarUrl")
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     @PropertyName("createdAt")

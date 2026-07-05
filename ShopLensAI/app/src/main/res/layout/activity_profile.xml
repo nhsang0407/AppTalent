@@ -1,128 +1,437 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
-        android:theme="@style/ThemeOverlay.Material3.Dark"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/ic_back"
-        app:title="@string/profile"
-        app:titleTextColor="@color/white" />
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.Material3.Dark">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primary"
+            app:navigationIcon="@drawable/ic_back"
+            app:title="@string/profile"
+            app:titleTextColor="@color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/space_l">
+            android:paddingBottom="32dp">
 
-            <ImageView
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/bg_avatar_circle"
-                android:contentDescription="@string/cd_profile"
-                android:padding="@dimen/space_l"
-                android:src="@drawable/ic_person"
-                app:tint="@color/primary" />
-
-            <TextView
-                android:id="@+id/tv_name"
+            <!-- Header: Avatar + Name + Email -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                android:gravity="center"
-                android:text="Name"
-                android:textAppearance="@style/Text.Title" />
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:background="@color/primary"
+                android:paddingTop="24dp"
+                android:paddingBottom="40dp">
 
-            <TextView
-                android:id="@+id/tv_email"
+                <!-- Avatar container -->
+                <FrameLayout
+                    android:id="@+id/frameAvatar"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/ivAvatar"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:background="@drawable/bg_avatar_circle"
+                        android:contentDescription="@string/cd_profile"
+                        android:padding="@dimen/space_l"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_person"
+                        app:tint="@color/primary" />
+
+                    <!-- Edit badge -->
+                    <ImageView
+                        android:id="@+id/ivAvatarEdit"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_avatar_edit"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_camera"
+                        android:contentDescription="@string/change_avatar"
+                        app:tint="@color/white" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:text="—" />
+
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="13sp"
+                    android:text="—" />
+
+                <!-- Avatar upload progress -->
+                <ProgressBar
+                    android:id="@+id/progressAvatar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Cards container with negative margin to overlap header -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xs"
-                android:gravity="center"
-                android:text="email@example.com"
-                android:textAppearance="@style/Text.Body" />
+                android:orientation="vertical"
+                android:layout_marginTop="-20dp"
+                android:paddingStart="@dimen/space_l"
+                android:paddingEnd="@dimen/space_l">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_phone"
-                style="@style/Widget.ShopLens.TextInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xl"
-                android:hint="@string/phone">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_phone"
+                <!-- Card 1: Personal Information -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardPersonalInfo"
+                    style="@style/Widget.ShopLens.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginBottom="@dimen/space_m">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_address"
-                style="@style/Widget.ShopLens.TextInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_m"
-                android:hint="@string/address">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/space_l">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_address"
+                        <!-- Section header -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="@dimen/space_m">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/personal_information"
+                                android:textAppearance="@style/Text.Title"
+                                android:textSize="16sp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnEditInfo"
+                                style="@style/Widget.ShopLens.Button.Text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/edit"
+                                android:textSize="13sp"
+                                app:icon="@drawable/ic_edit"
+                                app:iconSize="16dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="0dp" />
+                        </LinearLayout>
+
+                        <!-- Full Name (view) -->
+                        <LinearLayout
+                            android:id="@+id/layoutViewName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginBottom="@dimen/space_m">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/full_name"
+                                android:textAppearance="@style/Text.Caption"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvViewName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textAppearance="@style/Text.Body"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp"
+                                android:text="—" />
+                        </LinearLayout>
+
+                        <!-- Full Name (edit) -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilName"
+                            style="@style/Widget.ShopLens.TextInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/space_m"
+                            android:hint="@string/full_name"
+                            android:visibility="gone">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName|textCapWords" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Email (always readonly) -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginBottom="@dimen/space_m">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/email"
+                                android:textAppearance="@style/Text.Caption"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvViewEmail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textAppearance="@style/Text.Body"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp"
+                                android:text="—" />
+                        </LinearLayout>
+
+                        <!-- Phone (view) -->
+                        <LinearLayout
+                            android:id="@+id/layoutViewPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginBottom="@dimen/space_s">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/phone_number"
+                                android:textAppearance="@style/Text.Caption"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvViewPhone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textAppearance="@style/Text.Body"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp"
+                                android:text="—" />
+                        </LinearLayout>
+
+                        <!-- Phone (edit) -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilPhone"
+                            style="@style/Widget.ShopLens.TextInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/space_m"
+                            android:hint="@string/phone_number"
+                            android:visibility="gone">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPhone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="phone" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Save button (hidden when not editing) -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSaveInfo"
+                            style="@style/Widget.ShopLens.Button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/save_changes"
+                            android:visibility="gone" />
+
+                        <!-- Loading indicator -->
+                        <ProgressBar
+                            android:id="@+id/progressInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/space_s"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 2: Account Settings -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardSettings"
+                    style="@style/Widget.ShopLens.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="top"
-                    android:inputType="textMultiLine|textPostalAddress"
-                    android:minLines="2" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginBottom="@dimen/space_m">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_save"
-                style="@style/Widget.ShopLens.Button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xl"
-                android:text="@string/save_changes" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp">
 
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/space_m"
-                android:visibility="gone" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/space_l"
+                            android:paddingEnd="@dimen/space_l"
+                            android:paddingTop="@dimen/space_m"
+                            android:paddingBottom="@dimen/space_s"
+                            android:text="@string/account_settings"
+                            android:textAppearance="@style/Text.Title"
+                            android:textSize="16sp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="@dimen/space_xl"
-                android:background="@color/outline_variant" />
+                        <!-- My Addresses row -->
+                        <LinearLayout
+                            android:id="@+id/rowAddresses"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingStart="@dimen/space_l"
+                            android:paddingEnd="@dimen/space_l"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_logout"
-                style="@style/Widget.ShopLens.Button.Text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/logout"
-                android:textColor="@color/error"
-                app:icon="@drawable/ic_logout"
-                app:iconTint="@color/error" />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_location"
+                                android:contentDescription="@null"
+                                app:tint="@color/primary" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="@dimen/space_m"
+                                android:text="@string/my_addresses"
+                                android:textAppearance="@style/Text.Body"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp" />
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_chevron_right"
+                                android:contentDescription="@null"
+                                app:tint="@color/text_tertiary" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginStart="@dimen/space_l"
+                            android:background="@color/outline_variant" />
+
+                        <!-- Language row -->
+                        <LinearLayout
+                            android:id="@+id/rowLanguage"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingStart="@dimen/space_l"
+                            android:paddingEnd="@dimen/space_l"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_language"
+                                android:contentDescription="@null"
+                                app:tint="@color/primary" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="@dimen/space_m"
+                                android:text="@string/language"
+                                android:textAppearance="@style/Text.Body"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/tvCurrentLanguage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/space_s"
+                                android:textAppearance="@style/Text.Caption"
+                                android:textSize="12sp" />
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_chevron_right"
+                                android:contentDescription="@null"
+                                app:tint="@color/text_tertiary" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 3: Logout -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardLogout"
+                    style="@style/Widget.ShopLens.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/space_l">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLogout"
+                        style="@style/Widget.ShopLens.Button.Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/space_l"
+                        android:text="@string/logout"
+                        android:textColor="@color/error"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:icon="@drawable/ic_logout"
+                        app:iconTint="@color/error"
+                        app:iconGravity="textStart" />
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

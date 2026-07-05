@@ -57,6 +57,10 @@
         <activity android:name=".user.CheckoutActivity" android:exported="false" />
         <activity android:name=".user.OrderHistoryActivity" android:exported="false" />
         <activity android:name=".user.ProfileActivity" android:exported="false" />
+        <activity android:name=".user.AddressListActivity" android:exported="false" />
+        <activity android:name=".user.AddressFormActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:exported="false" />
 
         <!-- Admin -->
         <activity android:name=".admin.AdminDashboardActivity" android:exported="false" />
