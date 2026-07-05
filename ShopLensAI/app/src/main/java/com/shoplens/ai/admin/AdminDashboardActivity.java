@@ -50,6 +50,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         binding = ActivityAdminDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
+        com.shoplens.ai.utils.UiUtils.applyTopAndBottomInsets(getWindow(), binding.rootAdminDashboard, binding.toolbar, binding.bottomNav);
 
         viewModel = new ViewModelProvider(this).get(AdminDashboardViewModel.class);
 

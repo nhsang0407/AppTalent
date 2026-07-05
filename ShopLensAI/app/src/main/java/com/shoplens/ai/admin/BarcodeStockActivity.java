@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -57,6 +58,24 @@ public class BarcodeStockActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityBarcodeStockBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        final int closeBtnOriginalMarginTop = ((ViewGroup.MarginLayoutParams) binding.btnClose.getLayoutParams()).topMargin;
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+            androidx.core.graphics.Insets systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.btnClose.getLayoutParams();
+            params.topMargin = closeBtnOriginalMarginTop + systemBars.top;
+            binding.btnClose.setLayoutParams(params);
+
+            binding.panel.setPadding(
+                    binding.panel.getPaddingLeft(),
+                    binding.panel.getPaddingTop(),
+                    binding.panel.getPaddingRight(),
+                    systemBars.bottom
+            );
+            return insets;
+        });
+        androidx.core.view.ViewCompat.requestApplyInsets(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(ProductViewModel.class);
         cameraExecutor = Executors.newSingleThreadExecutor();

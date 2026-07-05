@@ -2,6 +2,7 @@ package com.shoplens.ai.user;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,6 +44,26 @@ public class ProductDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityProductDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        final int btnBackOriginalMarginTop = ((ViewGroup.MarginLayoutParams) binding.btnBack.getLayoutParams()).topMargin;
+        final int bottomBarOriginalPaddingBottom = binding.bottomBar.getPaddingBottom();
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.rootProductDetail, (v, insets) -> {
+            androidx.core.graphics.Insets systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+            
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.btnBack.getLayoutParams();
+            params.topMargin = btnBackOriginalMarginTop + systemBars.top;
+            binding.btnBack.setLayoutParams(params);
+            
+            binding.bottomBar.setPadding(
+                    binding.bottomBar.getPaddingLeft(),
+                    binding.bottomBar.getPaddingTop(),
+                    binding.bottomBar.getPaddingRight(),
+                    bottomBarOriginalPaddingBottom + systemBars.bottom
+            );
+            return insets;
+        });
+        androidx.core.view.ViewCompat.requestApplyInsets(binding.rootProductDetail);
 
         productId = getIntent().getStringExtra(Constants.EXTRA_PRODUCT_ID);
 

@@ -62,6 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
+        com.shoplens.ai.utils.UiUtils.setupSystemBarInsets(getWindow(), binding.rootHome, binding.toolbar, binding.bottomNav, binding.fabCamera);
 
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);

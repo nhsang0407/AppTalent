@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.Image;
 import android.os.Bundle;
+import android.view.ViewGroup;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -54,6 +55,17 @@ public class BarcodeScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityBarcodeScanBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        final int closeBtnOriginalMarginTop = ((ViewGroup.MarginLayoutParams) binding.btnClose.getLayoutParams()).topMargin;
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+            androidx.core.graphics.Insets systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.btnClose.getLayoutParams();
+            params.topMargin = closeBtnOriginalMarginTop + systemBars.top;
+            binding.btnClose.setLayoutParams(params);
+            return insets;
+        });
+        androidx.core.view.ViewCompat.requestApplyInsets(binding.getRoot());
 
         cameraExecutor = Executors.newSingleThreadExecutor();
         binding.btnClose.setOnClickListener(v -> finish());
