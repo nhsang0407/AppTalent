@@ -8,5 +8,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+.env
 # Keep google-services.json out of public repos in real projects:
-# app/google-services.json
+app/google-services.json
