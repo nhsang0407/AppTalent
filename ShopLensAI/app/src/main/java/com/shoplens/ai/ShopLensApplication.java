@@ -12,9 +12,16 @@ import com.google.firebase.firestore.PersistentCacheSettings;
  */
 public class ShopLensApplication extends Application {
 
+    private static ShopLensApplication instance;
+
+    public static ShopLensApplication getInstance() {
+        return instance;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         FirebaseApp.initializeApp(this);
 
         // Enable offline persistence (modern cache settings API).

@@ -12,10 +12,23 @@ import com.google.firebase.firestore.Query;
 import com.shoplens.ai.model.Product;
 import com.shoplens.ai.utils.Constants;
 import com.shoplens.ai.utils.FirebaseUtils;
+import com.shoplens.ai.api.CloudinaryApiService;
+import com.shoplens.ai.api.CloudinaryClient;
+import com.shoplens.ai.ShopLensApplication;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import org.json.JSONObject;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Reads and writes the "products" collection.
@@ -138,23 +151,110 @@ public class ProductRepository {
         return false;
     }
 
+    private interface CloudinaryUploadCallback {
+        void onSuccess(String secureUrl);
+        void onError(Exception e);
+    }
+
+    private void uploadImageToCloudinary(@NonNull Uri imageUri, @NonNull CloudinaryUploadCallback callback) {
+        String TAG = "ProductRepository";
+        android.os.Handler mainHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+
+        new Thread(() -> {
+            try {
+                android.util.Log.d(TAG, "uploadImageToCloudinary: start uri=" + imageUri);
+                // Read & compress bitmap
+                android.graphics.Bitmap bitmap = com.shoplens.ai.utils.ImageUtils
+                        .uriToBitmap(com.shoplens.ai.ShopLensApplication.getInstance(), imageUri);
+                if (bitmap == null) {
+                    android.util.Log.e(TAG, "uploadImageToCloudinary: failed to read bitmap");
+                    mainHandler.post(() -> callback.onError(new Exception("Không thể đọc ảnh sản phẩm.")));
+                    return;
+                }
+
+                // Scale down to max 1024px side
+                bitmap = com.shoplens.ai.utils.ImageUtils.scaleDown(bitmap, 1024);
+                byte[] bytes = com.shoplens.ai.utils.ImageUtils.bitmapToJpegBytes(bitmap, 85);
+
+                // Save to cache file for logging path & size
+                File cacheDir = com.shoplens.ai.ShopLensApplication.getInstance().getCacheDir();
+                File tempFile = new File(cacheDir, "product_compressed_" + System.currentTimeMillis() + ".jpg");
+                try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                    fos.write(bytes);
+                }
+
+                android.util.Log.d(TAG, "uploadImageToCloudinary: compressed product image path=" + tempFile.getAbsolutePath());
+                android.util.Log.d(TAG, "uploadImageToCloudinary: compressed product image size=" + tempFile.length() + " bytes");
+
+                // Build multipart payload
+                RequestBody presetBody = RequestBody.create(
+                        MediaType.parse("text/plain"),
+                        "yxmkshhb"
+                );
+                RequestBody fileBody = RequestBody.create(
+                        MediaType.parse("image/jpeg"),
+                        tempFile
+                );
+                MultipartBody.Part filePart = MultipartBody.Part.createFormData(
+                        "file",
+                        tempFile.getName(),
+                        fileBody
+                );
+
+                // API call
+                CloudinaryApiService service = CloudinaryClient.getApiService();
+                Call<ResponseBody> call = service.uploadImage("pmvkdo8v", presetBody, filePart);
+
+                android.util.Log.d(TAG, "uploadImageToCloudinary: Cloudinary product upload start");
+                Response<ResponseBody> response = call.execute();
+                int code = response.code();
+                android.util.Log.d(TAG, "uploadImageToCloudinary: Cloudinary response code=" + code);
+
+                if (!response.isSuccessful()) {
+                    String error = response.errorBody() != null ? response.errorBody().string() : "";
+                    android.util.Log.e(TAG, "uploadImageToCloudinary: Cloudinary upload failed, body=" + error);
+                    mainHandler.post(() -> callback.onError(new Exception("Không thể tải ảnh sản phẩm lên. Vui lòng thử lại.")));
+                    return;
+                }
+
+                String body = response.body() != null ? response.body().string() : "";
+                JSONObject json = new JSONObject(body);
+                String secureUrl = json.optString("secure_url");
+                android.util.Log.d(TAG, "uploadImageToCloudinary: Cloudinary secure_url=" + secureUrl);
+
+                if (secureUrl == null || secureUrl.isEmpty() || (!secureUrl.startsWith("http://") && !secureUrl.startsWith("https://"))) {
+                    android.util.Log.e(TAG, "uploadImageToCloudinary: invalid secure_url=" + secureUrl);
+                    mainHandler.post(() -> callback.onError(new Exception("Không thể tải ảnh sản phẩm lên. Vui lòng thử lại.")));
+                    return;
+                }
+
+                mainHandler.post(() -> callback.onSuccess(secureUrl));
+            } catch (Exception e) {
+                android.util.Log.e(TAG, "uploadImageToCloudinary: exception", e);
+                mainHandler.post(() -> callback.onError(e));
+            }
+        }).start();
+    }
+
     public void addProduct(Product product, @Nullable Uri imageUri,
                            @NonNull ProductCallback callback) {
+        android.util.Log.d("ProductRepository", "addProduct: start, product=" + product.getName() + ", imageUri=" + imageUri);
         if (imageUri != null) {
-            FirebaseUtils.uploadImageToStorage(imageUri, Constants.STORAGE_PRODUCTS,
-                    new FirebaseUtils.UploadCallback() {
-                        @Override
-                        public void onSuccess(String downloadUrl) {
-                            product.setImageUrl(downloadUrl);
-                            persistNewProduct(product, callback);
-                        }
+            uploadImageToCloudinary(imageUri, new CloudinaryUploadCallback() {
+                @Override
+                public void onSuccess(String secureUrl) {
+                    product.setImageUrl(secureUrl);
+                    android.util.Log.d("ProductRepository", "addProduct: Cloudinary upload success. imageUrl before save=" + product.getImageUrl());
+                    persistNewProduct(product, callback);
+                }
 
-                        @Override
-                        public void onError(Exception e) {
-                            callback.onError(e);
-                        }
-                    });
+                @Override
+                public void onError(Exception e) {
+                    callback.onError(e);
+                }
+            });
         } else {
+            android.util.Log.d("ProductRepository", "addProduct: no imageUri provided. imageUrl before save=" + product.getImageUrl());
             persistNewProduct(product, callback);
         }
     }
@@ -164,26 +264,33 @@ public class ProductRepository {
                 FirebaseUtils.getDb().collection(Constants.COLLECTION_PRODUCTS).document();
         product.setProductId(ref.getId());
         ref.set(product)
-                .addOnSuccessListener(unused -> callback.onSuccess(product))
-                .addOnFailureListener(callback::onError);
+                .addOnSuccessListener(unused -> {
+                    android.util.Log.d("ProductRepository", "persistNewProduct: Firestore product save success. id=" + product.getProductId());
+                    callback.onSuccess(product);
+                })
+                .addOnFailureListener(e -> {
+                    android.util.Log.e("ProductRepository", "persistNewProduct: Firestore product save fail", e);
+                    callback.onError(e);
+                });
     }
 
     /** Uploads a new image, then updates the existing product document with its URL. */
     public void updateProductWithImage(Product product, @NonNull Uri imageUri,
                                        @NonNull ProductCallback callback) {
-        FirebaseUtils.uploadImageToStorage(imageUri, Constants.STORAGE_PRODUCTS,
-                new FirebaseUtils.UploadCallback() {
-                    @Override
-                    public void onSuccess(String downloadUrl) {
-                        product.setImageUrl(downloadUrl);
-                        updateProduct(product, callback);
-                    }
+        android.util.Log.d("ProductRepository", "updateProductWithImage: start, product=" + product.getName() + ", imageUri=" + imageUri);
+        uploadImageToCloudinary(imageUri, new CloudinaryUploadCallback() {
+            @Override
+            public void onSuccess(String secureUrl) {
+                product.setImageUrl(secureUrl);
+                android.util.Log.d("ProductRepository", "updateProductWithImage: Cloudinary upload success. imageUrl before save=" + product.getImageUrl());
+                updateProduct(product, callback);
+            }
 
-                    @Override
-                    public void onError(Exception e) {
-                        callback.onError(e);
-                    }
-                });
+            @Override
+            public void onError(Exception e) {
+                callback.onError(e);
+            }
+        });
     }
 
     public void updateProduct(Product product, @NonNull ProductCallback callback) {
@@ -194,8 +301,14 @@ public class ProductRepository {
         FirebaseUtils.getDb().collection(Constants.COLLECTION_PRODUCTS)
                 .document(product.getProductId())
                 .set(product)
-                .addOnSuccessListener(unused -> callback.onSuccess(product))
-                .addOnFailureListener(callback::onError);
+                .addOnSuccessListener(unused -> {
+                    android.util.Log.d("ProductRepository", "updateProduct: Firestore product save success. id=" + product.getProductId());
+                    callback.onSuccess(product);
+                })
+                .addOnFailureListener(e -> {
+                    android.util.Log.e("ProductRepository", "updateProduct: Firestore product save fail", e);
+                    callback.onError(e);
+                });
     }
 
     public void updateStock(String productId, int newStock, @NonNull VoidCallback callback) {
