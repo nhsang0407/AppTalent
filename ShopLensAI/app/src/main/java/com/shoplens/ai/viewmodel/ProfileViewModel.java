@@ -15,11 +15,23 @@ import com.shoplens.ai.model.Address;
 import com.shoplens.ai.model.User;
 import com.shoplens.ai.utils.Constants;
 import com.shoplens.ai.utils.FirebaseUtils;
+import com.shoplens.ai.api.CloudinaryApiService;
+import com.shoplens.ai.api.CloudinaryClient;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import org.json.JSONObject;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * ViewModel for ProfileActivity, AddressListActivity, AddressFormActivity.
@@ -106,8 +118,7 @@ public class ProfileViewModel extends AndroidViewModel {
         avatarUploading.setValue(true);
         android.util.Log.d(TAG, "updateAvatar: start, uri=" + imageUri);
 
-        // Read & compress bitmap on background thread to avoid content URI permission issues
-        // that cause putFile() to fail silently with "Object does not exist at location"
+        // Read & compress bitmap on background thread
         new Thread(() -> {
             try {
                 android.graphics.Bitmap bitmap = com.shoplens.ai.utils.ImageUtils
@@ -118,57 +129,87 @@ public class ProfileViewModel extends AndroidViewModel {
                     errorMessage.postValue("Không thể đọc ảnh. Vui lòng thử ảnh khác.");
                     return;
                 }
-                // Scale down to max 1024px side
-                bitmap = com.shoplens.ai.utils.ImageUtils.scaleDown(bitmap, 1024);
+                // Scale down to max 512px side
+                bitmap = com.shoplens.ai.utils.ImageUtils.scaleDown(bitmap, 512);
                 byte[] bytes = com.shoplens.ai.utils.ImageUtils.bitmapToJpegBytes(bitmap, 85);
-                android.util.Log.d(TAG, "updateAvatar: compressed " + bytes.length + " bytes");
 
-                // Use uid-based filename so each user has one avatar slot
-                String storagePath = Constants.STORAGE_AVATARS + uid + "_"
-                        + System.currentTimeMillis() + ".jpg";
-                android.util.Log.d(TAG, "updateAvatar: uploading to path=" + storagePath);
+                // Save compressed bytes to temp file in cache to get size and path
+                File cacheDir = getApplication().getCacheDir();
+                File compressedFile = new File(cacheDir, "avatar_compressed_" + uid + "_" + System.currentTimeMillis() + ".jpg");
+                try (FileOutputStream fos = new FileOutputStream(compressedFile)) {
+                    fos.write(bytes);
+                }
 
-                // Build storage ref and upload bytes directly (avoids content:// URI issues)
-                com.google.firebase.storage.StorageReference ref = FirebaseUtils.getStorage()
-                        .getReference().child(storagePath);
-                ref.putBytes(bytes)
-                        .addOnSuccessListener(taskSnapshot -> {
-                            android.util.Log.d(TAG, "updateAvatar: putBytes success, getting downloadUrl");
-                            ref.getDownloadUrl()
-                                    .addOnSuccessListener(dlUri -> {
-                                        String downloadUrl = dlUri.toString();
-                                        android.util.Log.d(TAG, "updateAvatar: downloadUrl=" + downloadUrl);
-                                        // Save to Firestore
-                                        FirebaseUtils.getDb()
-                                                .collection(Constants.COLLECTION_USERS).document(uid)
-                                                .update("avatarUrl", downloadUrl)
-                                                .addOnSuccessListener(unused -> {
-                                                    android.util.Log.d(TAG, "updateAvatar: Firestore saved");
-                                                    avatarUploading.setValue(false);
-                                                    User current = user.getValue();
-                                                    if (current != null) {
-                                                        current.setAvatarUrl(downloadUrl);
-                                                        user.setValue(current);
-                                                    }
-                                                    successMessage.setValue("avatar_updated");
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    android.util.Log.e(TAG, "updateAvatar: Firestore update failed", e);
-                                                    avatarUploading.setValue(false);
-                                                    errorMessage.setValue("Không thể lưu ảnh đại diện. Vui lòng thử lại.");
-                                                });
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        android.util.Log.e(TAG, "updateAvatar: getDownloadUrl failed", e);
-                                        avatarUploading.setValue(false);
-                                        errorMessage.setValue("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
-                                    });
+                android.util.Log.d(TAG, "updateAvatar: compressed file path=" + compressedFile.getAbsolutePath());
+                android.util.Log.d(TAG, "updateAvatar: compressed file size=" + compressedFile.length() + " bytes");
+
+                // Construct Retrofit payload
+                RequestBody presetBody = RequestBody.create(
+                        MediaType.parse("text/plain"),
+                        "yxmkshhb"
+                );
+                RequestBody fileBody = RequestBody.create(
+                        MediaType.parse("image/jpeg"),
+                        compressedFile
+                );
+                MultipartBody.Part filePart = MultipartBody.Part.createFormData(
+                        "file",
+                        compressedFile.getName(),
+                        fileBody
+                );
+
+                // Call Cloudinary API
+                CloudinaryApiService service = CloudinaryClient.getApiService();
+                Call<ResponseBody> call = service.uploadImage("pmvkdo8v", presetBody, filePart);
+
+                android.util.Log.d(TAG, "updateAvatar: Cloudinary upload start");
+                Response<ResponseBody> response = call.execute();
+                int responseCode = response.code();
+                android.util.Log.d(TAG, "updateAvatar: Cloudinary response code=" + responseCode);
+
+                if (!response.isSuccessful()) {
+                    String errorBody = response.errorBody() != null ? response.errorBody().string() : "";
+                    android.util.Log.e(TAG, "updateAvatar: Cloudinary upload failed, body=" + errorBody);
+                    avatarUploading.postValue(false);
+                    errorMessage.postValue("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                JSONObject json = new JSONObject(responseBody);
+                String secureUrl = json.optString("secure_url");
+                android.util.Log.d(TAG, "updateAvatar: Cloudinary secure_url=" + secureUrl);
+
+                if (secureUrl == null || secureUrl.isEmpty() || (!secureUrl.startsWith("http://") && !secureUrl.startsWith("https://"))) {
+                    android.util.Log.e(TAG, "updateAvatar: invalid secure_url=" + secureUrl);
+                    avatarUploading.postValue(false);
+                    errorMessage.postValue("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
+                    return;
+                }
+
+                // Update Firestore
+                FirebaseUtils.getDb()
+                        .collection(Constants.COLLECTION_USERS).document(uid)
+                        .update("avatarUrl", secureUrl)
+                        .addOnSuccessListener(unused -> {
+                            android.util.Log.d(TAG, "updateAvatar: Firestore avatarUrl update success. secure_url=" + secureUrl);
+                            avatarUploading.setValue(false);
+                            User current = user.getValue();
+                            if (current != null) {
+                                current.setAvatarUrl(secureUrl);
+                                user.setValue(current);
+                                android.util.Log.d(TAG, "updateAvatar: Local user object updated successfully. Local avatarUrl=" + current.getAvatarUrl());
+                            } else {
+                                android.util.Log.w(TAG, "updateAvatar: Local user object is null, cannot update local avatarUrl!");
+                            }
+                            successMessage.setValue("avatar_updated");
                         })
                         .addOnFailureListener(e -> {
-                            android.util.Log.e(TAG, "updateAvatar: putBytes failed", e);
+                            android.util.Log.e(TAG, "updateAvatar: Firestore avatarUrl update fail. secure_url=" + secureUrl, e);
                             avatarUploading.setValue(false);
-                            errorMessage.setValue("Không thể tải ảnh lên. Vui lòng kiểm tra kết nối và thử lại.");
+                            errorMessage.setValue("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
                         });
+
             } catch (Exception e) {
                 android.util.Log.e(TAG, "updateAvatar: exception", e);
                 avatarUploading.postValue(false);

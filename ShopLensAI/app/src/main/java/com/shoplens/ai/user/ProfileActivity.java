@@ -159,24 +159,50 @@ public class ProfileActivity extends AppCompatActivity {
         binding.tvViewPhone.setText(user.getPhone() != null && !user.getPhone().isEmpty()
                 ? user.getPhone() : "—");
 
-        // Avatar — only load from Glide if avatarUrl is a valid https:// URL.
+        // Avatar — only load from Glide if avatarUrl is a valid http:// or https:// URL.
         // Any other value (null, empty, gs:// path) must show default avatar without
         // touching Firebase Storage (avoids "Object does not exist at location").
         String avatarUrl = user.getAvatarUrl();
-        if (avatarUrl != null && avatarUrl.startsWith("https://")) {
-            android.util.Log.d("ProfileActivity", "populateUser: loading avatar from URL");
+        android.util.Log.d("ProfileActivity", "populateUser: avatarUrl read from User model=" + avatarUrl);
+        if (avatarUrl != null && !avatarUrl.trim().isEmpty() && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))) {
+            android.util.Log.d("ProfileActivity", "populateUser: loading avatar from URL=" + avatarUrl.trim());
+            
+            // Clear tint to prevent the loaded image from being tinted blue
+            binding.ivAvatar.setImageTintList(null);
+            binding.ivAvatar.clearColorFilter();
+            
             Glide.with(this)
-                    .load(avatarUrl)
+                    .load(avatarUrl.trim())
+                    .signature(new com.bumptech.glide.signature.ObjectKey(avatarUrl.trim()))
                     .circleCrop()
                     .placeholder(R.drawable.ic_person)
                     .error(R.drawable.ic_person)
+                    .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@androidx.annotation.Nullable com.bumptech.glide.load.engine.GlideException e, 
+                                                    Object model, 
+                                                    com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, 
+                                                    boolean isFirstResource) {
+                            android.util.Log.e("ProfileActivity", "Avatar load failed. url=" + model, e);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(android.graphics.drawable.Drawable resource, 
+                                                       Object model, 
+                                                       com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, 
+                                                       com.bumptech.glide.load.DataSource dataSource, 
+                                                       boolean isFirstResource) {
+                            android.util.Log.d("ProfileActivity", "Avatar load success. url=" + model + ", source=" + dataSource);
+                            return false;
+                        }
+                    })
                     .into(binding.ivAvatar);
             binding.ivAvatar.setPadding(0, 0, 0, 0);
-            binding.ivAvatar.clearColorFilter();
         } else {
             if (avatarUrl != null && !avatarUrl.isEmpty()) {
                 android.util.Log.w("ProfileActivity",
-                        "populateUser: invalid avatarUrl (not https://), showing default. url=" + avatarUrl);
+                        "populateUser: invalid avatarUrl (not http/https), showing default. url=" + avatarUrl);
             }
             // Show default person icon with padding
             binding.ivAvatar.setPadding(
@@ -185,6 +211,10 @@ public class ProfileActivity extends AppCompatActivity {
                     (int) getResources().getDimension(R.dimen.space_l),
                     (int) getResources().getDimension(R.dimen.space_l));
             binding.ivAvatar.setImageResource(R.drawable.ic_person);
+            
+            // Re-apply primary color tint list to the placeholder person icon
+            binding.ivAvatar.setImageTintList(android.content.res.ColorStateList.valueOf(
+                    getColor(R.color.primary)));
         }
 
         // Language label
